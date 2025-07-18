@@ -1,0 +1,51 @@
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+.w-80 {
+    width: 80% !important;
+}
+
+.h-0 {
+    height: 0 !important;
+}
+
+#solicitudes {
+    position: relative;
+    overflow: hidden;
+    block-size: calc(100vh - 12rem);
+}
+
+#solicitudDetalles {
+    position: absolute;
+    z-index: -1;
+    block-size: calc(100vh - 12rem);
+    inline-size: 100%;
+    inset-block-start: 0;
+    inset-inline-end: -100%;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#solicitudDetalles.show {
+    z-index: 4;
+    inset-inline-end: -1px;
+}
+
+#visorArchivos {
+    transition: all 0.5s ease;
+}
+
+#visorArchivos.fullscreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 9999 !important;
+    background: rgba(0, 0, 0, 0.95);
+    #layout-menu & {
+        z-index: 1 !important;
+    }
+    #layout-navbar & {
+        z-index: 1 !important;
+    }
+}
