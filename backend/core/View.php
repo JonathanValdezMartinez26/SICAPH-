@@ -6,72 +6,17 @@ $usuario = $_SESSION['nombre'] ?? 'Usuario';
 function getMenu()
 {
     $menuItems = [
-        'Mis Viáticos y Gastos' => [
-            'icono' => 'fa-solid fa-usd',
+        'FORMATOS' => [
+            'icono' => 'fa fa-file-invoice',
             'subItems' => [
                 [
-                    'label' => 'Mis Solicitudes',
-                    'url' => '/Viaticos/Solicitud',
-                    'permisos' => ['1', '2']
-                ]
-            ]
-        ],
-        'Autorizaciones' => [
-            'icono' => 'fa-solid fa-bell',
-            'subItems' => [
-                [
-                    'label' => 'Pendientes',
-                    'url' => '/Viaticos/Autorizacion',
-                    'permisos' => ['1', '2']
-                ],
-            ]
-        ],
-        'Tesorería' => [
-            'icono' => 'fa-solid fa-screwdriver-wrench',
-            'subItems' => [
-                [
-                    'label' => '1. Entrega de Viáticos',
-                    'url' => '/Viaticos/Entrega',
+                    'label' => 'CULTIVA',
+                    'url' => '/Formatos/Cultiva',
                     'permisos' => ['1', '2']
                 ],
                 [
-                    'label' => '2. Comprobación',
-                    'url' => '/Viaticos/Validacion',
-                    'permisos' => ['1', '2']
-                ],
-                [
-                    'label' => '3. Ajustes',
-                    'url' => '/Viaticos/Ajustes',
-                    'permisos' => ['1', '2']
-                ]
-            ]
-        ],
-        'Reportería' => [
-            'icono' => 'fa-solid fa-file',
-            'subItems' => [
-                [
-                    'label' => 'Resumen Tesorería',
-                    'url' => 'app-viaticos-dashboard.html',
-                    'permisos' => ['1', '2']
-                ]
-            ]
-        ],
-        'Configuración' => [
-            'icono' => 'fa-solid fa-cog',
-            'subItems' => [
-                [
-                    'label' => 'Usuarios',
-                    'url' => '/usuarios/existentes/',
-                    'permisos' => ['1', '2']
-                ],
-                [
-                    'label' => 'Empresas',
-                    'url' => '/empresas/existentes/',
-                    'permisos' => ['1', '2']
-                ],
-                [
-                    'label' => 'Sucursales',
-                    'url' => '/sucursales/existentes/',
+                    'label' => 'MCM',
+                    'url' => '/Formatos/MCM',
                     'permisos' => ['1', '2']
                 ]
             ]
