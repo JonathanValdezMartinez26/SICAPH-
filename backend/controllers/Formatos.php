@@ -294,6 +294,7 @@ class Formatos extends Controller
         $archivo = $formato['datos']['ARCHIVO'];
         $archivo = is_resource($archivo) ? stream_get_contents($archivo) : $archivo;
         if ($archivo === false) {
+            echo json_encode(self::respuesta(false, 'Error al leer el archivo del formato.'));
             return self::respuestaJSON(self::respuesta(false, 'Error al leer el archivo del formato.'));
         }
 

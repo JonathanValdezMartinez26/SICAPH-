@@ -136,7 +136,7 @@ class Formatos extends Model
             $db = new Database('mcm');
             $res = $db->queryOne($qry, $val);
             if (!$res) throw new \Exception("Formato no encontrado.");
-            return self::resultado(true, 'Formato obtenido correctamente.', $res['ARCHIVO']);
+            return self::resultado(true, 'Formato obtenido correctamente.', $res);
         } catch (\Exception $e) {
             return self::resultado(false, 'Error al obtener el formato.', null, $e->getMessage());
         }
