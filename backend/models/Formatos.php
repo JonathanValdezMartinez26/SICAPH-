@@ -40,7 +40,7 @@ class Formatos extends Model
 
     public static function getFormatoCultiva($datos)
     {
-        $qry = "SELECT ARCHIVO FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
+        $qry = "SELECT ARCHIVO, TIPO FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
 
         $val = [
             'idFormato' => $datos['idFormato']
@@ -83,13 +83,33 @@ class Formatos extends Model
 
         try {
             $db = new Database('cultiva');
+            $db->beginTransaction();
             $db->CRUD($qryA, $valA, $retA);
 
             if (!$retA['id']['valor']) throw new \Exception("Error al insertar el formato.");
 
+            $db->commit();
             return self::resultado(true, 'Formato registrado correctamente.', ['formatoId' => $retA['id']['valor']]);
         } catch (\Exception $e) {
+            $db->rollBack();
             return self::resultado(false, 'Error al registrar el formato.', null, $e->getMessage());
+        }
+    }
+
+    public static function eliminarFormatoCultiva($datos)
+    {
+        $qry = "DELETE FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
+
+        $val = [
+            'idFormato' => $datos['idFormato']
+        ];
+
+        try {
+            $db = new Database('cultiva');
+            $db->CRUD($qry, $val);
+            return self::resultado(true, 'Formato eliminado correctamente.');
+        } catch (\Exception $e) {
+            return self::resultado(false, 'Error al eliminar el formato.', null, $e->getMessage());
         }
     }
 
@@ -126,7 +146,7 @@ class Formatos extends Model
 
     public static function getFormatoMCM($datos)
     {
-        $qry = "SELECT ARCHIVO FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
+        $qry = "SELECT ARCHIVO, TIPO FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
 
         $val = [
             'idFormato' => $datos['idFormato']
@@ -179,6 +199,23 @@ class Formatos extends Model
         } catch (\Exception $e) {
             $db->rollBack();
             return self::resultado(false, 'Error al registrar el formato.', null, $e->getMessage());
+        }
+    }
+
+    public static function eliminarFormatoMCM($datos)
+    {
+        $qry = "DELETE FROM REPOSITORIO_CAPITALH WHERE ID = :idFormato";
+
+        $val = [
+            'idFormato' => $datos['idFormato']
+        ];
+
+        try {
+            $db = new Database('mcm');
+            $db->CRUD($qry, $val);
+            return self::resultado(true, 'Formato eliminado correctamente.');
+        } catch (\Exception $e) {
+            return self::resultado(false, 'Error al eliminar el formato.', null, $e->getMessage());
         }
     }
 }

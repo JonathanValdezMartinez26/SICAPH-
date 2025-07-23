@@ -36,6 +36,11 @@ class Formatos extends Controller
                                     texto: "Formato",
                                     icono: "fa-eye",
                                     funcion: "verFormato(" + formato.ID + ")"
+                                }, {
+                                    texto: "Eliminar",
+                                    icono: "fa-trash",
+                                    clase: "text-danger",
+                                    funcion: "eliminaFormato(" + formato.ID + ")"
                                 }])
                             ]
                         })
@@ -80,10 +85,9 @@ class Formatos extends Controller
 
                 const subirFormato = () => {
                     confirmarMovimiento("¿Desea subir este nuevo formato?").then((continuar) => {
-                        if (!continuar) return
+                        if (!continuar.isConfirmed) return
 
-                        const archivo = $("#archivoFormato")[0].files[0]
-                        //const archivo = $("#archivoFormato").prop("files")[0]
+                        const archivo = $("#archivoFormato").prop("files")[0]
                         const nombre = $("#nombre").val().trim()
                         const fechas = getInputFechas("#fechasVigencia", true, false)
 
@@ -95,7 +99,25 @@ class Formatos extends Controller
                             if (!respuesta.success) return showError(respuesta.mensaje)
 
                             $("#modalSubirFormato").modal("hide")
-                            showSuccess(respuesta.mensaje)
+                            showSuccess(respuesta.mensaje).then(getFormatos)
+                        }, {
+                            procesar: false,
+                            tipoContenido: false
+                        })
+                    })
+                }
+
+                const eliminaFormato = (id) => {
+                    confirmarMovimiento("¿Desea eliminar este formato?").then((continuar) => {
+                        if (!continuar.isConfirmed) return
+
+                        const formData = new FormData();
+                        formData.append("idFormato", id);
+
+                        consultaServidor("/Formatos/eliminarFormatoCultiva", formData, (respuesta) => {
+                            if (!respuesta.success) return showError(respuesta.mensaje)
+
+                            showSuccess(respuesta.mensaje).then(getFormatos)
                         }, {
                             procesar: false,
                             tipoContenido: false
@@ -109,7 +131,8 @@ class Formatos extends Controller
                     configuraTabla(tabla)
                     setvalNuevoFormato()
 
-                    $("#btnAgregar").on("click", function() {
+                    $("#btnBuscarSolicitudes").on("click", getFormatos)
+                    $("#btnAgregar").on("click", () => {
                         $("#modalSubirFormato").modal("show")
                     })
 
@@ -151,15 +174,18 @@ class Formatos extends Controller
 
     public function registrarFormatoCultiva()
     {
-        $validacion = self::getDatosSubirArchivo();
-        if (!$validacion['success']) {
-            return self::respuestaJSON($validacion);
-        }
-
-        $datos = $validacion['datos'];
+        $datos = self::getDatosSubirArchivo();
         $resultado = FormatosDAO::registraFormatoCultiva($datos);
-        if (is_resource($datos['archivo'])) fclose($datos['archivo']);
 
+        if (is_resource($datos['archivo'])) fclose($datos['archivo']);
+        self::respuestaJSON($resultado);
+    }
+
+    public function eliminarFormatoCultiva()
+    {
+        $datos = $_SERVER['REQUEST_METHOD'] !== 'POST' ? $_GET : $_POST;
+
+        $resultado = FormatosDAO::eliminarFormatoCultiva($datos);
         self::respuestaJSON($resultado);
     }
 
@@ -192,7 +218,14 @@ class Formatos extends Controller
                                     texto: "Formato",
                                     icono: "fa-eye",
                                     funcion: "verFormato(" + formato.ID + ")"
-                                }])
+                                },
+                                {
+                                    texto: "Eliminar",
+                                    icono: "fa-trash",
+                                    clase: "text-danger",
+                                    funcion: "eliminaFormato(" + formato.ID + ")"
+                                }]
+                            )
                             ]
                         })
 
@@ -207,7 +240,7 @@ class Formatos extends Controller
                     mostrarArchivoDescargado("/Formatos/getFormatoMCM", parametro)
                 }
 
-                const setvalNuevoFormato = () => {
+                const setValNuevoFormato = () => {
                     const campos = {
                         nombre: {
                             notEmpty: {
@@ -236,10 +269,9 @@ class Formatos extends Controller
 
                 const subirFormato = () => {
                     confirmarMovimiento("¿Desea subir este nuevo formato?").then((continuar) => {
-                        if (!continuar) return
-
-                        const archivo = $("#archivoFormato")[0].files[0]
-                        //const archivo = $("#archivoFormato").prop("files")[0]
+                        if (!continuar.isConfirmed) return
+                        return showSuccess("Subiendo formato...")
+                        const archivo = $("#archivoFormato").prop("files")[0]
                         const nombre = $("#nombre").val().trim()
                         const fechas = getInputFechas("#fechasVigencia", true, false)
 
@@ -251,7 +283,25 @@ class Formatos extends Controller
                             if (!respuesta.success) return showError(respuesta.mensaje)
 
                             $("#modalSubirFormato").modal("hide")
-                            showSuccess(respuesta.mensaje)
+                            showSuccess(respuesta.mensaje).then(getFormatos)
+                        }, {
+                            procesar: false,
+                            tipoContenido: false
+                        })
+                    })
+                }
+
+                const eliminaFormato = (id) => {
+                    confirmarMovimiento("¿Desea eliminar este formato?").then((continuar) => {
+                        if (!continuar.isConfirmed) return
+
+                        const parametro = new FormData()
+                        parametro.append("idFormato", id)
+
+                        consultaServidor("/Formatos/eliminarFormatoMCM", parametro, (respuesta) => {
+                            if (!respuesta.success) return showError(respuesta.mensaje)
+
+                            showSuccess(respuesta.mensaje).then(getFormatos)
                         }, {
                             procesar: false,
                             tipoContenido: false
@@ -263,8 +313,9 @@ class Formatos extends Controller
                     setInputFechas("#filtroFechas", { rango: true, iniD: -30 })
                     setInputFechas("#fechasVigencia", { rango: true, enModal: true, finD: 365, minD: 0 })
                     configuraTabla(tabla)
-                    setvalNuevoFormato()
+                    setValNuevoFormato()
 
+                    $("#btnBuscarSolicitudes").on("click", getFormatos)
                     $("#btnAgregar").on("click", function() {
                         $("#modalSubirFormato").modal("show")
                     })
@@ -312,6 +363,14 @@ class Formatos extends Controller
         $resultado = FormatosDAO::registraFormatoMCM($datos);
 
         if (is_resource($datos['archivo'])) fclose($datos['archivo']);
+        self::respuestaJSON($resultado);
+    }
+
+    public function eliminarFormatoMCM()
+    {
+        $datos = $_SERVER['REQUEST_METHOD'] !== 'POST' ? $_GET : $_POST;
+
+        $resultado = FormatosDAO::eliminarFormatoMCM($datos);
         self::respuestaJSON($resultado);
     }
 
